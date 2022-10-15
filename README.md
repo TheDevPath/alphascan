@@ -37,3 +37,5 @@ Let's Build Alphascan so that we have an easy way to inspect our scrypto compone
 [JS SDK Docs](https://docs.radixdlt.com/main/scrypto/alphanet/javascript-sdk.html)
 
 [Alphanet v0 API spec](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/radixdlt/babylon-alphanet/main/gateway-api-v0/gateway-api-v0-schema.yaml)
+
+[Alphanet Wallet browser extension docs](https://docs.radixdlt.com/main/scrypto/alphanet/wallet-extension.html)

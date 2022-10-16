@@ -4,9 +4,7 @@ import './App.css';
 
 function App() {
   const [resourceAddress, setResourceAddress] = useState('');
-  const [results, setResults] = useState(
-    'Enter Resource Address To Fetch Data'
-  );
+  const [results, setResults] = useState(null);
 
   const fetchResults = async (e) => {
     e.preventDefault();
@@ -26,10 +24,17 @@ function App() {
     };
 
     fetch('https://alphanet.radixdlt.com/v0/state/component', requestOptions)
-      .then((response) => response.text())
-      .then((result) => setResults(result))
+      .then((result) => result.json())
+      .then((data) => setResults(data))
       .catch((error) => console.log('error', error));
   };
+  if (results) {
+    console.log('results: ', results);
+    console.log('results info: ', results.info);
+    console.log('results state: ', results.state);
+    console.log('results owned_vaults: ', results.owned_vaults);
+    console.log('results desc_ids: ', results.descendant_ids);
+  }
 
   return (
     <div className="App">
@@ -47,7 +52,7 @@ function App() {
         <button type="submit">Get Resource Data</button>
       </form>
 
-      <div className="results">{results}</div>
+      <div className="results">{}</div>
       <a
         className="App-link"
         href="https://youtube.com/playlist?list=PL4EVBVoyp_YCzFkrH6ziVT70wuh0o-lCW"

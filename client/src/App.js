@@ -1,13 +1,58 @@
 import { useState } from 'react';
-
 import './App.css';
+// Alphanet SDK Imports
+import {
+  StateApi,
+  TransactionApi,
+  StatusApi,
+} from '@radixdlt/alphanet-gateway-api-v0-sdk';
+import Sdk, { ManifestBuilder } from '@radixdlt/alphanet-walletextension-sdk';
 
 function App() {
   const [resourceAddress, setResourceAddress] = useState('');
   const [fetchResults, setFetchResults] = useState(null);
   const [sdkResults, setSdkResults] = useState(null);
+  const [accountAddress, setAccountAddress] = useState('');
 
-  const fetchCompoentState = async (e) => {
+  // Initialize the SDK
+  const sdk = Sdk();
+  // Initialize Gateway API SDKs
+  const transactionApi = new TransactionApi();
+  const stateApi = new StateApi();
+  const statusApi = new StatusApi();
+
+  // Use Wallet SDK to get current account address
+  const sdkWalletAddress = async () => {
+    const result = await sdk.request({
+      accountAddresses: {},
+    });
+
+    if (result.isErr()) {
+      throw result.error;
+    }
+
+    const { accountAddresses } = result.value;
+    console.log('accountAddresses', accountAddresses);
+    setAccountAddress(accountAddresses[0].address);
+  };
+
+  // use SDK to fetch component or account(accounts are also components) state from ledger
+  const sdkComponentState = async (e) => {
+    e.preventDefault();
+    console.log('Getting State via SDK');
+
+    // Fetch the state of a component
+    const account_state = await stateApi.stateComponentPost({
+      v0StateComponentRequest: { component_address: accountAddress },
+    });
+    if (account_state) {
+      console.log('sdk account_state: ', account_state);
+      setSdkResults(account_state);
+    }
+  };
+
+  // Get component state using Javascript fetch
+  const fetchComponentState = async (e) => {
     e.preventDefault();
     console.log('fetching ledger state');
     var myHeaders = new Headers();
@@ -39,9 +84,14 @@ function App() {
 
   return (
     <div className="App">
-      <form onSubmit={fetchCompoentState}>
+      {/* get connected account */}
+      <button onClick={sdkWalletAddress}>Get Connected Account</button>
+      <p>Connected Wallet Account Address: {accountAddress}</p>
+
+      {/* fetch gateway api account / component form */}
+      <form onSubmit={fetchComponentState}>
         <label>
-          <span>Resource Address:</span>
+          <span>Component/Account Address:</span>
           <input
             required
             type="text"
@@ -49,8 +99,25 @@ function App() {
             value={resourceAddress}
           />
         </label>
+
+        <button type="submit">Fetch API Component Data</button>
         <hr />
-        <button type="submit">Get Resource Data</button>
+      </form>
+
+      {/* sdK account / component form */}
+      <form onSubmit={sdkComponentState}>
+        <label>
+          <span>Component/Account Address:</span>
+          <input
+            required
+            type="text"
+            onChange={(e) => setResourceAddress(e.target.value)}
+            value={resourceAddress}
+          />
+        </label>
+
+        <button type="submit">Get SDK Component Data</button>
+        <hr />
       </form>
 
       <div className="results">{}</div>

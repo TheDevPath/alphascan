@@ -4,9 +4,10 @@ import './App.css';
 
 function App() {
   const [resourceAddress, setResourceAddress] = useState('');
-  const [results, setResults] = useState(null);
+  const [fetchResults, setFetchResults] = useState(null);
+  const [sdkResults, setSdkResults] = useState(null);
 
-  const fetchResults = async (e) => {
+  const fetchCompoentState = async (e) => {
     e.preventDefault();
     console.log('fetching ledger state');
     var myHeaders = new Headers();
@@ -25,20 +26,20 @@ function App() {
 
     fetch('https://alphanet.radixdlt.com/v0/state/component', requestOptions)
       .then((result) => result.json())
-      .then((data) => setResults(data))
+      .then((data) => setFetchResults(data))
       .catch((error) => console.log('error', error));
   };
-  if (results) {
-    console.log('results: ', results);
-    console.log('results info: ', results.info);
-    console.log('results state: ', results.state);
-    console.log('results owned_vaults: ', results.owned_vaults);
-    console.log('results desc_ids: ', results.descendant_ids);
+  if (fetchResults) {
+    console.log('fetchResults: ', fetchResults);
+    console.log('fetchResults info: ', fetchResults.info);
+    console.log('fetchResults state: ', fetchResults.state);
+    console.log('fetchResults owned_vaults: ', fetchResults.owned_vaults);
+    console.log('fetchResults desc_ids: ', fetchResults.descendant_ids);
   }
 
   return (
     <div className="App">
-      <form onSubmit={fetchResults}>
+      <form onSubmit={fetchCompoentState}>
         <label>
           <span>Resource Address:</span>
           <input
